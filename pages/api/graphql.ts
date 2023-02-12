@@ -10,6 +10,7 @@ export const schema = makeExecutableSchema({ typeDefs, resolvers });
 const server = new ApolloServer({
   schema,
   plugins: [ApolloServerPluginLandingPageLocalDefault()],
+  introspection: true,
 });
 
 export default startServerAndCreateNextHandler(server);
