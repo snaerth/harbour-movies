@@ -5,7 +5,7 @@ import { useAppStore } from '../lib/store';
 
 type MovieCardProps = MovieSearchResult[number];
 
-export const MovieCard = ({ Poster, Title, imdbID, Year }: MovieCardProps) => {
+export const MovieCard = ({ Poster, Title, imdbID: imdbId, Year }: MovieCardProps) => {
   const { addMovie, deleteMovie } = useAppStore();
 
   return (
@@ -16,12 +16,20 @@ export const MovieCard = ({ Poster, Title, imdbID, Year }: MovieCardProps) => {
       <div className="card-body">
         <h2 className="card-title">{Title}</h2>
         <p>Year - {Year}</p>
-        <p>imdbID - {imdbID}</p>
+        <p>imdbID - {imdbId}</p>
         <div className="card-actions justify-end">
-          <button className="btn btn-secondary" onClick={() => deleteMovie('snaer@aranja.com', imdbID)}>
+          <button className="btn btn-secondary" onClick={() => deleteMovie(11)}>
             Remove
           </button>
-          <button className="btn btn-primary" onClick={() => addMovie('snaer@aranja.com', imdbID)}>
+          <button
+            className="btn btn-primary"
+            onClick={() =>
+              addMovie({
+                imdbId,
+                listId: 1,
+              })
+            }
+          >
             Add
           </button>
         </div>

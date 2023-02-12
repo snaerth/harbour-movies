@@ -42,13 +42,30 @@ export const typeDefs = gql`
     imdbID: String
   }
 
+  type MovieList {
+    id: Int!
+    created_at: String!
+    name: String!
+    email: String!
+  }
+
+  type MovieListItem {
+    id: Int!
+    created_at: String!
+    imdb_id: String!
+    movie_list_id: Int!
+    movie: Movie!
+  }
+
   type Query {
-    myMovies(email: String): [Movie!]!
-    movie(title: String!, year: String): Movie
-    # movie argument is movie object converted to string
-    addMovie(email: String!, imdb_id: String!, movie: String!): Boolean
-    removeMovie(email: String!, imdb_id: String!): Boolean
+    addMovie(imdbId: String!, listId: Int!): Boolean
+    removeMovie(id: Int!): Boolean
     searchMovieById(id: String!): Movie
     searchMovieByTitle(title: String!, year: String): [SearchMovie]
+    createList(name: String!, email: String!): MovieList!
+    deleteList(id: Int!): Boolean!
+    getMovieLists(email: String!): [MovieList!]!
+    getMovieList(id: Int!): MovieList!
+    getMovieListItems(listId: Int!): [MovieListItem!]!
   }
 `;

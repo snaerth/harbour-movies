@@ -2,20 +2,6 @@ import { supabase } from '../lib/supabase';
 import { OMDB_API_KEY } from '../utils/constants';
 import { Movie } from '../types/movie';
 
-export const getMyMovies = async (email: string): Promise<Movie[]> => {
-  try {
-    const { data: list, error } = await supabase.from('my_movies').select('movie').eq('email', email);
-
-    if (error) {
-      return [];
-    }
-
-    return list.filter((item) => item.movie).map((obj) => JSON.parse(obj.movie)) as Movie[];
-  } catch (e) {
-    throw new Error('Could not get movie list');
-  }
-};
-
 export const getMovieById = async (id: string): Promise<Movie> => {
   const baseUrl = `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&plot=full`;
 
@@ -23,7 +9,7 @@ export const getMovieById = async (id: string): Promise<Movie> => {
     const response = await fetch(`${baseUrl}&i=${id}`);
     return (await response.json()) as Movie;
   } catch (e) {
-    throw new Error('Not found');
+    throw e;
   }
 };
 
@@ -34,34 +20,105 @@ export const searchMovies = async (title: string, year?: string) => {
     const response = await fetch(`${baseUrl}&s=${title}${year ? `&y=${year}` : ''}`);
     return await response.json();
   } catch (e) {
-    throw new Error('Not found');
+    throw e;
   }
 };
 
-export const insertMovie = async (email: string, imdb_id: string, movie: Movie) => {
-  const { data } = await supabase.from('my_movies').select('imdb_id').eq('email', email);
+export type AddMovieParams = {
+  imdbId: string;
+  movie: Movie;
+  listId: number;
+};
+
+export const addMovie = async ({ imdbId, movie, listId }: AddMovieParams) => {
+  const { data } = await supabase.from('my_movies').select('imdb_id').eq('movie_list_id', listId);
   const list = data as { imdb_id: string }[];
-  const exists = list?.find((item) => item.imdb_id === imdb_id);
+  const exists = list?.find((item) => item.imdb_id === imdbId);
 
   if (exists) {
     throw new Error('Item is already in your list');
   }
 
-  const { error } = await supabase.from('my_movies').insert({ email, imdb_id, movie: JSON.stringify(movie) });
+  const { error } = await supabase.from('my_movies').insert({
+    imdb_id: imdbId,
+    movie: JSON.stringify(movie),
+    movie_list_id: listId,
+  });
 
   if (error) {
-    throw new Error('Internal server error');
+    throw error;
   }
 
   return true;
 };
 
-export const deleteMovie = async (email: string, imdb_id: string) => {
-  const { error } = await supabase.from('my_movies').delete().eq('email', email).eq('imdb_id', imdb_id);
+export const removeMovie = async (id: number) => {
+  const { error } = await supabase.from('my_movies').delete().eq('id', id);
 
   if (error) {
-    throw new Error('Internal server error');
+    throw error;
   }
 
   return true;
+};
+
+export const createList = async (name: string, email: string) => {
+  const { data, error } = await supabase.from('movie_lists').insert({ name, email }).select('*');
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+export const getMovieLists = async (email: string) => {
+  const { data, error } = await supabase.from('movie_lists').select('*').eq('email', email);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+export const getMovieList = async (id: string) => {
+  const { data, error } = await supabase.from('movie_lists').select('*').eq('id', id);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteMovieList = async (id: string) => {
+  const { error } = await supabase.from('movie_lists').delete().eq('id', id);
+
+  if (error) {
+    throw error;
+  }
+
+  return true;
+};
+
+type MovieListItem = {
+  id: number;
+  created_at: string;
+  imdb_id: string;
+  movie_list_id: number;
+  movie: Movie;
+};
+
+export const getMovieListItems = async (listId: number) => {
+  const { data, error } = await supabase.from('my_movies').select('*').eq('movie_list_id', listId);
+
+  if (error) {
+    throw error;
+  }
+
+  return (data as MovieListItem[]).map((item) => ({
+    ...item,
+    movie: JSON.parse(item.movie as unknown as string) as Movie,
+  }));
 };

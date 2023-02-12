@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { deleteMovie, getMovieById, insertMovie, searchMovies } from '../../services/movie.service';
 import { z } from 'zod';
+import { removeMovie, getMovieById, addMovie, searchMovies } from '../../services/movie.service';
 import { isImdbId } from '../../utils/isImdbId';
 import { Movie } from '../../types/movie';
 
@@ -10,13 +10,12 @@ const queryParamsGet = z.object({
 });
 
 const postValidate = z.object({
-  id: z.string(),
-  email: z.string().email(),
+  listId: z.number(),
+  imdbId: z.string(),
 });
 
 const deleteValidate = z.object({
-  id: z.string(),
-  email: z.string().email(),
+  id: z.number(),
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -24,39 +23,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === 'GET') {
       const { search, year } = req.query;
 
-      try {
-        await queryParamsGet.parseAsync({ search, year });
-        const searchStr = search as string;
-        const yearStr = year as string;
-        const movies = isImdbId(searchStr) ? await getMovieById(searchStr) : await searchMovies(searchStr, yearStr);
+      await queryParamsGet.parseAsync({ search, year });
+      const searchStr = search as string;
+      const yearStr = year as string;
+      const movies = isImdbId(searchStr) ? await getMovieById(searchStr) : await searchMovies(searchStr, yearStr);
 
-        return res.status(200).json(movies.Search ? movies.Search : [movies as Movie]);
-      } catch (error) {}
-    } else {
-      const { id, email } = req.body;
+      return res.status(200).json(movies.Search ? movies.Search : [movies as Movie]);
+    } else if (req.method === 'POST') {
+      const { imdbId, email, listId } = req.body;
+      await postValidate.parseAsync({ imdbId, email, listId });
+      const movie = await getMovieById(imdbId);
 
-      if (req.method === 'POST') {
-        await postValidate.parseAsync({ id, email });
+      await addMovie({
+        imdbId,
+        movie,
+        listId,
+      });
+    } else if (req.method === 'DELETE') {
+      const id = req.body.id as number;
+      await deleteValidate.parseAsync({ id });
 
-        const movie = await getMovieById(id);
-
-        await insertMovie(email, id, movie);
-      } else if (req.method === 'DELETE') {
-        await deleteValidate.parseAsync({ id, email });
-
-        await deleteMovie(email, id);
-      }
-
-      return res.status(200).json({ status: 'success' });
+      await removeMovie(id);
     }
+
+    return res.status(200).json({ status: 'success' });
   } catch (error) {
     if (error instanceof z.ZodError) {
       error = error.issues.map((e) => ({ path: e.path[0], message: e.message }));
     }
 
-    return res.status(409).json({
-      status: 'failed',
-      message: error.message,
-    });
+    return res.status(409).json(error);
   }
 }

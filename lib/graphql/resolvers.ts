@@ -1,4 +1,14 @@
-import { deleteMovie, getMovieById, getMyMovies, insertMovie, searchMovies } from '../../services/movie.service';
+import {
+  removeMovie,
+  getMovieById,
+  addMovie,
+  searchMovies,
+  createList,
+  deleteMovieList,
+  getMovieLists,
+  getMovieList,
+  getMovieListItems,
+} from '../../services/movie.service';
 import { isImdbId } from '../../utils/isImdbId';
 
 export const resolvers = {
@@ -10,14 +20,31 @@ export const resolvers = {
       const movies = await searchMovies(title, year);
       return movies.Search;
     },
-    myMovies: async (_, { email }) => {
-      return await getMyMovies(email);
+    addMovie: async (_, { imdbId, listId }) => {
+      const movie = await getMovieById(imdbId);
+      return addMovie({
+        imdbId,
+        listId,
+        movie,
+      });
     },
-    addMovie: async (_, { email, imdb_id, movie }) => {
-      return await insertMovie(email, imdb_id, movie);
+    removeMovie: (_, { id }) => {
+      return removeMovie(id);
     },
-    removeMovie: async (_, { email, imdb_id }) => {
-      return await deleteMovie(email, imdb_id);
+    createList: (_, { name, email }) => {
+      return createList(name, email);
+    },
+    deleteList: (_, { id }) => {
+      return deleteMovieList(id);
+    },
+    getMovieLists: (_, { email }) => {
+      return getMovieLists(email);
+    },
+    getMovieList: (_, { id }) => {
+      return getMovieList(id);
+    },
+    getMovieListItems: (_, { listId }) => {
+      return getMovieListItems(listId);
     },
   },
 };
