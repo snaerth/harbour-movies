@@ -9,12 +9,7 @@ export const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const server = new ApolloServer({
   schema,
-  plugins: [
-    ApolloServerPluginLandingPageProductionDefault({
-      embed: true,
-      graphRef: 'my-graph@current',
-    }),
-  ],
+  plugins: [ApolloServerPluginLandingPageProductionDefault()],
 });
 
 export default startServerAndCreateNextHandler(server);
