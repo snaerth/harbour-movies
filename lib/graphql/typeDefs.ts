@@ -58,14 +58,17 @@ export const typeDefs = gql`
   }
 
   type Query {
-    addMovie(imdbId: String!, listId: Int!): Boolean
-    removeMovie(id: Int!): Boolean
     searchMovieById(id: String!): Movie
     searchMovieByTitle(title: String!, year: String): [SearchMovie]
-    createList(name: String!, email: String!): MovieList!
-    deleteList(id: Int!): Boolean!
     getMovieLists(email: String!): [MovieList!]!
     getMovieList(id: Int!): MovieList!
     getMovieListItems(listId: Int!): [MovieListItem!]!
+  }
+
+  type Mutation {
+    deleteList(id: Int!): Boolean!
+    createList(name: String!, email: String!): MovieList!
+    removeMovie(id: Int!): Boolean!
+    addMovie(imdbId: String!, listId: Int!): Boolean!
   }
 `;
