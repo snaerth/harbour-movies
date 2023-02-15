@@ -57,9 +57,8 @@ export const finishTODO = async (id: string, listId: number) => {
   const { data, error } = await supabase
     .from('todo_tasks')
     .update({ finished: true })
-    .match({ id, todo_list_id: listId })
-    .select('*');
-
+    .match({ id, todo_list_id: listId });
+  console.log(data, error);
   if (error) {
     throw error;
   }
@@ -68,7 +67,7 @@ export const finishTODO = async (id: string, listId: number) => {
     throw new Error('Task not found');
   }
 
-  return data;
+  return true;
 };
 
 export const removeTODO = async (id: string, listId: number) => {

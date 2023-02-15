@@ -108,6 +108,6 @@ export const typeDefs = gql`
     deleteTODOList(id: Int!): Boolean!
     addTODO(listId: Int!, desc: String!): Boolean!
     removeTODO(id: Int!, listId: Int!): Boolean!
-    finishTODO(id: Int!, listId: Int!): TODOListItem!
+    finishTODO(id: Int!, listId: Int!): Boolean!
   }
 `;
