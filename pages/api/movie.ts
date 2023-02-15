@@ -16,6 +16,7 @@ const postValidate = z.object({
 
 const deleteValidate = z.object({
   id: z.number(),
+  listId: z.number(),
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -41,9 +42,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     } else if (req.method === 'DELETE') {
       const id = req.body.id as number;
-      await deleteValidate.parseAsync({ id });
+      const listId = req.body.listId as number;
+      await deleteValidate.parseAsync({ id, listId });
 
-      await removeMovie(id);
+      await removeMovie(id, listId);
     }
 
     return res.status(200).json({ status: 'success' });
