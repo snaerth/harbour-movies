@@ -8,7 +8,7 @@ export const createTODOList = async ({ name, email }: { name: string; email: str
   }
 
   const { data, error } = await supabase.from('todo_lists').insert({ name, email }).select('*');
-  console.log(data);
+
   if (error) {
     throw error;
   }
@@ -41,33 +41,33 @@ export const addTODO = async ({ desc, listId }: AddTODOParams) => {
   if (res.error) {
     throw res.error;
   }
-  const { error } = await supabase.from('todo_tasks').insert({
-    todo_list_id: listId,
-    desc,
-  });
+  const { data, error } = await supabase
+    .from('todo_tasks')
+    .insert({
+      todo_list_id: listId,
+      desc,
+    })
+    .select('*');
 
   if (error) {
     throw error;
   }
 
-  return true;
+  return data[0];
 };
 
 export const finishTODO = async (id: string, listId: number) => {
   const { data, error } = await supabase
     .from('todo_tasks')
     .update({ finished: true })
-    .match({ id, todo_list_id: listId });
-  console.log(data, error);
+    .match({ id, todo_list_id: listId })
+    .select('*');
+
   if (error) {
     throw error;
   }
 
-  if (!data) {
-    throw new Error('Task not found');
-  }
-
-  return true;
+  return data[0];
 };
 
 export const removeTODO = async (id: string, listId: number) => {

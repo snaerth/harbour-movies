@@ -31,25 +31,28 @@ export type AddMovieParams = {
 };
 
 export const addMovie = async ({ imdbId, movie, listId }: AddMovieParams) => {
-  const { data } = await supabase.from('my_movies').select('imdb_id').eq('movie_list_id', listId);
-  const list = data as { imdb_id: string }[];
+  const res = await supabase.from('my_movies').select('imdb_id').eq('movie_list_id', listId);
+  const list = res.data as { imdb_id: string }[];
   const exists = list?.find((item) => item.imdb_id === imdbId);
 
   if (exists) {
     throw new Error('Item is already in your list');
   }
 
-  const { error } = await supabase.from('my_movies').insert({
-    imdb_id: imdbId,
-    movie: JSON.stringify(movie),
-    movie_list_id: listId,
-  });
+  const { data, error } = await supabase
+    .from('my_movies')
+    .insert({
+      imdb_id: imdbId,
+      movie: JSON.stringify(movie),
+      movie_list_id: listId,
+    })
+    .select('*');
 
   if (error) {
     throw error;
   }
 
-  return true;
+  return data[0];
 };
 
 export const removeMovie = async (id: number, listId: number) => {

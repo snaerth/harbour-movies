@@ -101,13 +101,13 @@ export const typeDefs = gql`
     deleteList(id: Int!): Boolean!
     createList(input: CreateListInput!): MovieList!
     removeMovie(id: Int!, listId: Int!): Boolean!
-    addMovie(imdbId: String!, listId: Int!): Boolean!
+    addMovie(imdbId: String!, listId: Int!): Movie!
 
     #  TODOs
     createTODOList(input: CreateTODOListInput!): TODOList!
     deleteTODOList(id: Int!): Boolean!
-    addTODO(listId: Int!, desc: String!): Boolean!
+    addTODO(listId: Int!, desc: String!): TODOListItem!
     removeTODO(id: Int!, listId: Int!): Boolean!
-    finishTODO(id: Int!, listId: Int!): Boolean!
+    finishTODO(id: Int!, listId: Int!): TODOListItem!
   }
 `;
