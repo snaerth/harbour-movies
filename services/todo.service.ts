@@ -53,6 +53,24 @@ export const addTODO = async ({ desc, listId }: AddTODOParams) => {
   return true;
 };
 
+export const finishTODO = async (id: string, listId: number) => {
+  const { data, error } = await supabase
+    .from('todo_tasks')
+    .update({ finished: true })
+    .match({ id, todo_list_id: listId })
+    .select('*');
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+    throw new Error('Task not found');
+  }
+
+  return data;
+};
+
 export const removeTODO = async (id: string, listId: number) => {
   const { error } = await supabase.from('todo_tasks').delete().match({ id, todo_list_id: listId });
 

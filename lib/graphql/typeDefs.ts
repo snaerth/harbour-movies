@@ -71,6 +71,7 @@ export const typeDefs = gql`
     created_at: String!
     desc: String!
     todo_list_id: Int!
+    finished: Boolean!
   }
 
   type MovieListItem {
@@ -107,5 +108,6 @@ export const typeDefs = gql`
     deleteTODOList(id: Int!): Boolean!
     addTODO(listId: Int!, desc: String!): Boolean!
     removeTODO(id: Int!, listId: Int!): Boolean!
+    finishTODO(id: Int!, listId: Int!): TODOListItem!
   }
 `;

@@ -18,6 +18,7 @@ import {
   getTODOLists,
   getTODOs,
   getTODOList,
+  finishTODO,
 } from '../../services/todo.service';
 
 export const resolvers = {
@@ -60,6 +61,9 @@ export const resolvers = {
     },
     removeTODO: (_, { id, listId }) => {
       return removeTODO(id, listId);
+    },
+    finishTODO: (_, { id, listId }) => {
+      return finishTODO(id, listId);
     },
   },
   Query: {
