@@ -6,6 +6,11 @@ export const typeDefs = gql`
     email: String!
   }
 
+  input CreateTODOListInput {
+    name: String!
+    email: String!
+  }
+
   type Rating {
     Source: String
     Value: String
@@ -54,6 +59,20 @@ export const typeDefs = gql`
     email: String!
   }
 
+  type TODOList {
+    id: Int!
+    created_at: String!
+    name: String!
+    email: String!
+  }
+
+  type TODOListItem {
+    id: Int!
+    created_at: String!
+    desc: String!
+    todo_list_id: Int!
+  }
+
   type MovieListItem {
     id: Int!
     created_at: String!
@@ -63,17 +82,30 @@ export const typeDefs = gql`
   }
 
   type Query {
+    # Movies
     searchMovieById(id: String!): Movie
     searchMovieByTitle(title: String!, year: String): [SearchMovie]
     getMovieLists(email: String!): [MovieList!]!
     getMovieList(id: Int!): MovieList!
     getMovieListItems(listId: Int!): [MovieListItem!]!
+
+    # TODOs
+    getTODOLists(email: String!): [TODOList!]!
+    getTODOList(id: Int!): TODOList!
+    getTODOs(listId: Int!): [TODOListItem!]!
   }
 
   type Mutation {
+    # Movies
     deleteList(id: Int!): Boolean!
     createList(input: CreateListInput!): MovieList!
-    removeMovie(id: Int!): Boolean!
+    removeMovie(id: Int!, listId: Int!): Boolean!
     addMovie(imdbId: String!, listId: Int!): Boolean!
+
+    #  TODOs
+    createTODOList(input: CreateTODOListInput!): TODOList!
+    deleteTODOList(id: Int!): Boolean!
+    addTODO(listId: Int!, desc: String!): Boolean!
+    removeTODO(id: Int!, listId: Int!): Boolean!
   }
 `;

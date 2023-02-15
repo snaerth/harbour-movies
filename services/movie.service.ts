@@ -52,8 +52,8 @@ export const addMovie = async ({ imdbId, movie, listId }: AddMovieParams) => {
   return true;
 };
 
-export const removeMovie = async (id: number) => {
-  const { error } = await supabase.from('my_movies').delete().eq('id', id);
+export const removeMovie = async (id: number, listId: number) => {
+  const { error } = await supabase.from('my_movies').delete().match({ id, movie_list_id: listId });
 
   if (error) {
     throw error;
