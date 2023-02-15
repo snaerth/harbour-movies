@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 export const createTODOList = async ({ name, email }: { name: string; email: string }) => {
   const res = await supabase.from('todo_lists').select('name,email').match({ name, email });
 
-  if (res.data.length > 0 || res.error) {
+  if (res.data.length > 0) {
     throw new Error('List already exists');
   }
 
@@ -86,7 +86,7 @@ export const getTODOLists = async (email: string) => {
   if (error) {
     throw error;
   }
-
+  console.log(data);
   return data;
 };
 
