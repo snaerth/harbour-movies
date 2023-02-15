@@ -1,6 +1,11 @@
 import gql from 'graphql-tag';
 
 export const typeDefs = gql`
+  input CreateListInput {
+    name: String!
+    email: String!
+  }
+
   type Rating {
     Source: String
     Value: String
@@ -67,7 +72,7 @@ export const typeDefs = gql`
 
   type Mutation {
     deleteList(id: Int!): Boolean!
-    createList(name: String!, email: String!): MovieList!
+    createList(input: CreateListInput!): MovieList!
     removeMovie(id: Int!): Boolean!
     addMovie(imdbId: String!, listId: Int!): Boolean!
   }

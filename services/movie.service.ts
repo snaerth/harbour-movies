@@ -63,13 +63,19 @@ export const removeMovie = async (id: number) => {
 };
 
 export const createList = async (name: string, email: string) => {
+  const res = await supabase.from('movie_lists').select('name,email').match({ name, email });
+
+  if (res.data.length > 0 || res.error) {
+    throw new Error('List already exists');
+  }
+
   const { data, error } = await supabase.from('movie_lists').insert({ name, email }).select('*');
 
   if (error) {
     throw error;
   }
 
-  return data;
+  return data[0];
 };
 
 export const getMovieLists = async (email: string) => {

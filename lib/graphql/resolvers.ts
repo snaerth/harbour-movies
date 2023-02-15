@@ -24,7 +24,7 @@ export const resolvers = {
     removeMovie: (_, { id }) => {
       return removeMovie(id);
     },
-    createList: (_, { name, email }) => {
+    createList: (_, { input: { name, email } }) => {
       return createList(name, email);
     },
     deleteList: (_, { id }) => {
