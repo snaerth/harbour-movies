@@ -52,7 +52,10 @@ export const addMovie = async ({ imdbId, movie, listId }: AddMovieParams) => {
     throw error;
   }
 
-  return data[0];
+  return {
+    ...data[0],
+    movie: JSON.parse(data[0].movie),
+  };
 };
 
 export const removeMovie = async (id: number, listId: number) => {

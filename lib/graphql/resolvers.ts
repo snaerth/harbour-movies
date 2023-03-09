@@ -28,6 +28,7 @@ export const resolvers = {
      */
     addMovie: async (_, { imdbId, listId }) => {
       const movie = await getMovieById(imdbId);
+
       return addMovie({
         imdbId,
         listId,

@@ -82,6 +82,14 @@ export const typeDefs = gql`
     movie: Movie!
   }
 
+  type AddMovieResponse {
+    id: Int!
+    created_at: String!
+    imdb_id: String!
+    movie_list_id: Int!
+    movie: Movie!
+  }
+
   type Query {
     # Movies
     searchMovieById(id: String!): Movie
@@ -101,7 +109,7 @@ export const typeDefs = gql`
     deleteList(id: Int!): Boolean!
     createList(input: CreateListInput!): MovieList!
     removeMovie(id: Int!, listId: Int!): Boolean!
-    addMovie(imdbId: String!, listId: Int!): Movie!
+    addMovie(imdbId: String!, listId: Int!): AddMovieResponse!
 
     #  TODOs
     createTODOList(input: CreateTODOListInput!): TODOList!
