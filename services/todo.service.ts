@@ -86,18 +86,22 @@ export const getTODOLists = async (email: string) => {
   if (error) {
     throw error;
   }
-  console.log(data);
+
   return data;
 };
 
 export const getTODOList = async (id: number) => {
   const { data, error } = await supabase.from('todo_lists').select('*').eq('id', id);
 
+  if (!data || data.length === 0) {
+    throw new Error('List does not exist');
+  }
+
   if (error) {
     throw error;
   }
 
-  return data;
+  return data?.[0];
 };
 
 export const getTODOs = async (listId: number) => {
