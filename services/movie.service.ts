@@ -105,6 +105,12 @@ export const getMovieList = async (id: string) => {
 };
 
 export const deleteMovieList = async (id: string) => {
+  const { error: myMoviesError } = await supabase.from('my_movies').delete().eq('movie_list_id', id);
+
+  if (myMoviesError) {
+    throw myMoviesError;
+  }
+
   const { error } = await supabase.from('movie_lists').delete().eq('id', id);
 
   if (error) {
