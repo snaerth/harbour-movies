@@ -101,7 +101,11 @@ export const getMovieList = async (id: string) => {
     throw error;
   }
 
-  return data;
+  if (data.length === 0) {
+    throw new Error('MovieList not found');
+  }
+
+  return data?.[0];
 };
 
 export const deleteMovieList = async (id: string) => {

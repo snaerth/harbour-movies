@@ -17,16 +17,16 @@ export const createTODOList = async ({ name, email }: { name: string; email: str
 };
 
 export const deleteTODOList = async (id: string) => {
-  const { error: todoTasksError } = await supabase.from('todo_tasks').delete().eq('todo_list_id', id);
+  const tasksRes = await supabase.from('todo_tasks').delete().eq('todo_list_id', id);
 
-  if (todoTasksError) {
-    throw todoTasksError;
+  if (tasksRes.error) {
+    throw tasksRes.error;
   }
 
-  const { error } = await supabase.from('todo_lists').delete().eq('id', id);
+  const res = await supabase.from('todo_lists').delete().eq('id', id);
 
-  if (error) {
-    throw error;
+  if (res.error) {
+    throw res.error;
   }
 
   return true;
