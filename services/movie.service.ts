@@ -16,6 +16,10 @@ export const getMovieById = async (id: string): Promise<Movie> => {
 export const searchMovies = async (title: string, year?: string) => {
   const baseUrl = `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}`;
 
+  if (title === 'show me error') {
+    throw new Error('Ups our api is down');
+  }
+
   try {
     const response = await fetch(`${baseUrl}&s=${title}${year ? `&y=${year}` : ''}`);
     return await response.json();
